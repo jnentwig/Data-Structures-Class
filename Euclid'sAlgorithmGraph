@@ -1,0 +1,66 @@
+/*Find the distribution of the number of iterations Euclid's Algorithm requires to compute gcd(a,b) 
+if a and b are chosen uniformly at random from 1 to 100,000.
+provide graph*/
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#define UPPER_BOUND 25 //upper bound is 25 because the largest fibonacci number that is less than 100,000 is the 25th in the sequence
+#define NUM_TRIALS 50000 //This number can be changed
+const long int RANDOM_MAX = (RAND_MAX + 1)*RAND_MAX + RAND_MAX;
+using namespace std;
+
+template <class myType>
+bool FirstIsMax(myType a, myType b) {
+	return (a>b ? true : false);
+}
+int Random(){
+	long int space = RANDOM_MAX-(RANDOM_MAX%100000),num;
+	do {
+		num = (RAND_MAX+1)*rand()+rand();
+	} while (num >= space);
+	return (num%100000)+1;
+}
+int num_times(int a, int b) {
+	if (FirstIsMax(a, b) == false) {
+		a ^= b;
+		b ^= a;
+		a ^= b;
+	}
+	int num = 0;
+	while (a%b != 0) {
+		int tmp = a % b;
+		a = b;
+		b = tmp;
+		num++;
+	} 
+	return num;
+}
+void makeGraph(int* data, int size) {
+	for (int i = 0; i < size; i++) {
+		cout << (i+1) << '\t' << data[i] << '\t';
+		int num_stars = round(data[i] / 100.00);
+		while (num_stars > 0) {
+			cout << '*';
+			num_stars--;
+		}
+		cout << endl;
+	}
+}
+double averageTrials(int* data, int size) { //finds average number for num_times
+	long int sum = 0;
+	for (int i = 0; i < size; i++) {
+		sum += data[i] * i;
+	}
+	return sum / (double)NUM_TRIALS;
+}
+int main() {
+	int plot[UPPER_BOUND] = {};
+	for (int i = 0; i < NUM_TRIALS; i++) {
+		plot[num_times(Random(), Random())]++;
+	}
+	makeGraph(plot, UPPER_BOUND);
+	cout << '\n' << "Average number of trials is " << averageTrials(plot, UPPER_BOUND) << endl;
+	char dummy;
+	cin >> dummy;
+	return 0;
+}
