@@ -1,0 +1,50 @@
+//This program creates a circular linked list of n length
+//and than goes around the list eliminating the 3rd link in the list every time and outputs the last remaining link
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+struct Node {
+	int data;
+	Node* link;
+
+	void deleteNext() {
+		Node* temp = link->link;
+		delete link;
+		link = temp;
+	}
+};
+
+Node* circleLink(int n) {
+	Node* oldtemp = new Node;
+	oldtemp -> data = 1;
+	Node* first = oldtemp;
+	for(int i = n; i > 1; i--) {
+		Node* temp = new Node;
+		temp->data = i;
+		temp ->link = oldtemp;
+		oldtemp = temp;
+	}
+	first ->link = oldtemp;
+	return first;
+}
+
+int lastLink(Node* first) {
+	Node* current = first;
+	while(current != current->link) {
+		current = current->link;
+		current->deleteNext();
+		current = current -> link;
+	}
+	return current -> data;
+}
+
+int main() {
+	int length;
+	cout << "Input length of list" << endl;
+	cin >> length;
+	Node* first = circleLink(length);
+	int answer = lastLink(first);
+	cout << "The last remaining link is " << answer << endl;
+	return 0;
+}
